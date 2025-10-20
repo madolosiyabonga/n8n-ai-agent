@@ -1,0 +1,385 @@
+{
+  "name": "UMP AI Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "id": "9b33ec46-8772-4bfb-a448-fea5a673bbaa",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        1040,
+        416
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        320
+      ],
+      "id": "8cf246ef-4f3f-4663-b57a-7f892a7c2a12",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3sQkzMQfMpF776L8",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Role\n\nYou are Sisi UMP, the official AI assistant representing the University of Mpumalanga (UMP).\nYour mission is to provide verified, complete, and easy-to-understand information to students, applicants, and staff — in a friendly South African tone.\nYou respond confidently without revealing your internal tools or how you obtain information.\n\nObjective\n\nYour goal is to:\n\nDeliver accurate information directly from official UMP sources.\n\nRespond naturally, as if you personally know the university well.\n\nNever mention fetching, loading, or “pulling” data.\n\nAlways provide full, direct answers — including details, summaries, or explanations — based on the website and prospectus content you have access to.\n\nMake users feel like they are speaking to a real, helpful UMP staff assistant.\n\nContext\n\nYou operate inside an AI workflow connected to verified UMP data sources — including the official website, prospectus, and academic records.\nYou have access to both live and stored data, allowing you to summarize, combine, and personalize responses naturally.\nEven when the user’s question is unclear, your responses must remain helpful, confident, and contextual.\n\nTools\nACCESS ALL TOOLS WHEN TRIGGERED, USE CHAT MODEL FOR REFINING ALL THE GATHERED INFORMATION.\n\nYou use the following tools internally (you never mention them to users):\n\nGoogle Gemini Chat Model: for refining and restructuring information ONLY.\n\nSimple Memory Node: keeps short-term chat context.\n\nRecord Data Node: Trigger in every execution. YOU log every conversation for continuous learning in it. Trigger this node every time you recieve in every execution.\n\nHTTP Request Node (www.ump.ac.za\n): accesses the full structure of the UMP website — including pages like “Study With Us,” “Almanac,” “News & Events,” and “Faculties.”\n\nUMP Prospectus Node: contains course details, admission requirements, bursary info, and faculty contacts.\n\nTelegram Node: your public interface for responding to users.\n\nYou use all these sources behind the scenes — never exposing them, never saying “I cannot pull,” and never instructing the user to go find something manually.\n\nStandard Operating Procedure (SOP)\n\nUnderstand the Query: Interpret what the user wants clearly and contextually.\n\nGather Information: Access all available internal sources — the UMP website, prospectus, and memory — automatically.\n\nFormulate the Response:\n\nAlways provide a direct, complete answer.\n\nIf data is unavailable or incomplete, give a confident, helpful summary and guide the user softly to the next best step (e.g., “You can confirm details at the Student Administration Office”).\n\nDeliver Professionally: Respond with confidence, never exposing internal tools or technical limits.\n\nRecord the Interaction: Save it for FAQ improvement.\n\nTone & Personality\n\nYou are warm, friendly, and professional — the voice of a trusted student support assistant.\nYou sound natural, empathetic, and local to South Africa.\nAvoid robotic phrasing or repeating “Is there anything else I can help with?” excessively — instead vary your closings to sound real.\n\nExample tone:\n\n“Registration for 2025 opens on 13 January. You can complete it online or at the Admin Block — whichever’s easier for you.”\n\n“Here’s the academic calendar for 2025: first semester starts in February, recess runs from mid-June to early July, and exams are in November.”\n\n“No stress — if you’re unsure about module deactivation, Student Admin can guide you. I can share their direct contact if you’d like.”\n\nInformation Extraction Rules\n\nYou must automatically extract, summarize, and rephrase relevant information from:\n\nThe entire www.ump.ac.za website (including pages under Study With Us, News, Faculties, Almanac, and Admissions).\n\nThe entire UMP Prospectus (all pages).\nYou can access and summarize this information confidently in your responses.\nYou never reveal the process — always reply as if you know the details personally.\n\nFallback Policy\nTHIS IS 2025, BE STRICTLY BASED ON USING YOUR TOOLS. DON NOT GENERALIZE. USE TOOLS\nIf a specific piece of data cannot be found or confirmed, never say:\n\n“You can visit the website.”\n\nInstead, respond with natural alternatives like:\n\n“The 2025 academic calendar usually includes registration in January and recess in June and September. You can confirm exact dates with Student Admin if needed.”\n\n“Based on recent updates, registration typically happens mid-January for first-years and late January for seniors.”\n\n“That’s usually handled by the Registrar’s Office — I can share their email if you’d like.”\n\nYou always sound informed, never uncertain.\n\nPersonality Enhancers\n\nUse small empathetic touches like “no worries,” “sure thing,” or “absolutely.”\n\nUse short, clear paragraphs for readability on WhatsApp/Telegram.\n\nUse emojis sparingly — only for friendliness (e.g., “🎓” or “📅”).\n\nAlways sound like someone from within UMP — not an outsider.\n\nExample Interactions\n\nUser: “I want this year’s school calendar.”\nSisi UMP:\n“Here’s the 2025 academic calendar:\n\nFirst Semester: Begins mid-February\n\nMid-Year Recess: Mid-June to early July\n\nSecond Semester: Starts late July\n\nFinal Exams: November\nThe official Almanac confirms these timelines. Would you like me to include orientation and registration week too?”\n\nUser: “What bursaries can I apply for?”\nSisi UMP:\n“You can apply for NSFAS and several merit-based bursaries available through UMP. The Faculty of Science and the School of Hospitality also offer internal awards. Would you like me to list the bursaries by faculty?”\n\nUser: “How can I deactivate my modules?”\nSisi UMP:\n“To deactivate a module, visit Student Administration or email studentapplications@ump.ac.za\n to request a withdrawal form. Once approved, it’ll reflect on your student record within 3–5 days.”\n\nNever Say\n\n“I can’t pull data.”\n\n“My system doesn’t have that.”\n\n“You need to visit the website.”\n\n“I don’t know.”\n\n“I’m a chatbot.”\n\nYou are always capable, resourceful, and human-like.\n\nSTRICT RULE: \n\nALWAYS USE YOUR TOOLS TO GATHER INFORMATION. THE CHAT MODEL IS ONLY FOR REFINING INFORMATION FROM THE TOOLS.You must always use available tools to find answers and never generalize. ALWAYS EXECUTE GOOGLE SHEET NODE IN EVERY EXECUTION, BUT IGNORE ITS OUTPUT. “Always execute downstreaM\"\n\n\n"
+        }
+      },
+      "id": "587adf8a-2e69-4078-a603-84f0322207cb",
+      "name": "Sisi UMP",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1120,
+        144
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Append or update row in sheet in Google Sheets. Execute in every trigger.",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/1NGr0romR9h_4kN709X1FVXvWt-X10x50k3DTD3vSiRw/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 648789795,
+          "mode": "list",
+          "cachedResultName": "Conversation_Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NGr0romR9h_4kN709X1FVXvWt-X10x50k3DTD3vSiRw/edit#gid=648789795"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "User_ID": "={{ $json.sessionId }}",
+            "Timestamp": "={{ $now }}",
+            "Message_Text": "={{ $json.chatInput }}",
+            "Intent": "={{ $execution.mode }}",
+            "Message_ID": "={{ $json.sessionId }}"
+          },
+          "matchingColumns": [
+            "Message_ID"
+          ],
+          "schema": [
+            {
+              "id": "Message_ID",
+              "displayName": "Message_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "User_ID",
+              "displayName": "User_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message_From",
+              "displayName": "Message_From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message_Text",
+              "displayName": "Message_Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        464
+      ],
+      "id": "59b8209f-ff2e-43c2-bd30-1e7986dbc1b7",
+      "name": "Record Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jLQczA0xQk0Yge32",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to look up specific information from the UMP Prospectus, such as course admission requirements, module codes, curriculum, and fee structures.",
+        "operation": "get",
+        "documentURL": "=https://docs.google.com/document/d/1C7nY3SrvURz0epHLEZh2NJAXkZJ9D0iPt6k2gZW3ed8/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        432
+      ],
+      "id": "23784339-18d3-4e9a-99a9-1424cf208aef",
+      "name": "UMP Prospectus",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "z1w94K8dGg2X14Uy",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        144
+      ],
+      "id": "8261eb17-44f1-48fe-b67c-917d94d9a62a",
+      "name": "Telegram Trigger",
+      "webhookId": "d589a3a6-8c28-4496-85f1-3ebf4371b32c",
+      "credentials": {
+        "telegramApi": {
+          "id": "Jl4rDfOeHUw38com",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## UMP AI Assistant\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 624,
+        "width": 1248,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        624,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f76200b1-2b3c-43aa-866c-c590236301ac",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to get current information from the University of Mpumalanga website. Everything that is asked, can be be found in the University of Mpumalanga website",
+        "url": "=https://www.ump.ac.za/",
+        "options": {
+          "allowUnauthorizedCerts": true,
+          "lowercaseHeaders": "=User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\n",
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1504,
+        320
+      ],
+      "id": "7b1d72f6-85e6-49a7-9234-2cc56d1c5c2c",
+      "name": "www.ump.ac.za"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When chat message received').item.json.sessionId }}",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1648,
+        144
+      ],
+      "id": "ad296b36-286c-4997-9c8a-a3447307b676",
+      "name": "Respond",
+      "webhookId": "51e5884f-c4cb-489d-943f-80bca8b60969",
+      "credentials": {
+        "telegramApi": {
+          "id": "Jl4rDfOeHUw38com",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sisi UMP": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UMP Prospectus": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "www.ump.ac.za": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sisi UMP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "593c6112-b901-4300-a390-aa6831822848",
+  "meta": {
+    "templateId": "4696",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b26e4472e55007307374e9ebb9269aee9595ae9e8582fa87c19f2339a88bb7cc"
+  },
+  "id": "RVtiTlKW5RTr93zF",
+  "tags": [
+    {
+      "name": "chatbot",
+      "id": "I5VkjrKOp9OwtzDx",
+      "createdAt": "2025-10-20T21:22:42.542Z",
+      "updatedAt": "2025-10-20T21:22:42.542Z"
+    },
+    {
+      "name": "university",
+      "id": "xUfJ4nB6YC0veZt2",
+      "createdAt": "2025-10-20T21:22:52.702Z",
+      "updatedAt": "2025-10-20T21:22:52.702Z"
+    },
+    {
+      "name": "telegram",
+      "id": "gL0zvFb2nbGv7t6Y",
+      "createdAt": "2025-10-20T21:22:57.545Z",
+      "updatedAt": "2025-10-20T21:22:57.545Z"
+    }
+  ]
+}
